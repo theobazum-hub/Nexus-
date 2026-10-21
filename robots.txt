@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://theobazum-hub.github.io/Nexus-/sitemap.xml
