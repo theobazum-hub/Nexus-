@@ -1,3 +1,31 @@
-<label for="amount">Amafaranga (RWF)</label>
-<input id="amount" type="number" min="1" step="1"
-       placeholder="50000">
+function invest() {
+  const field = document.getElementById("amount");
+  const msg = document.getElementById("investMessage");
+  const amount = Number(field.value);
+
+  if (!Number.isSafeInteger(amount) || amount <= 0) {
+    msg.textContent = "Andika amafaranga arenga zeru.";
+    return;
+  }
+
+  if (amount > state.balance) {
+    msg.textContent =
+      "Amafaranga ari muri Wallet yawe ntahagije.";
+    return;
+  }
+
+  state.balance -= amount;
+  state.investments.push({
+    label: "Invest ya demo",
+    amount: amount
+  });
+  state.wallet.push({
+    label: "Amafaranga ajyanywe muri Invest",
+    amount: -amount
+  });
+
+  save();
+
+  msg.textContent =
+    "Byakunze! Amafaranga wanditse yakuwe muri Wallet ya demo.";
+}
