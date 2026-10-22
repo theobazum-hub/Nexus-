@@ -1,31 +1,236 @@
-function invest() {
+
+<!DOCTYPE html>
+<html lang="rw">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="theme-color" content="#080808">
+<title>NEXUS CAPITAL — Demo</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#080808;color:white;font-family:system-ui,sans-serif;padding-bottom:85px}
+main{max-width:460px;margin:auto}
+header,nav{background:#141414;padding:16px;display:flex;justify-content:space-between;align-items:center}
+header{position:sticky;top:0;border-bottom:1px solid #333;z-index:2}
+nav{position:fixed;bottom:0;left:0;right:0;justify-content:space-around;border-top:1px solid #333;padding:8px 0}
+button,input{font:inherit}
+button{cursor:pointer;border:0;border-radius:10px;padding:12px;color:white;background:#292929}
+.gold{color:#ffd700}.primary{background:linear-gradient(120deg,#ffd700,#ffa500);color:#111;font-weight:800}
+.card{background:#1a1a1a;border:1px solid #292929;border-radius:16px;padding:16px;margin:12px 16px}
+.page{display:none}.page.active{display:block}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+input{width:100%;padding:12px;background:#080808;border:1px solid #444;color:white;border-radius:10px;margin:8px 0}
+small,.muted{color:#aaa}
+.full{width:100%;margin-top:10px}
+nav button{background:transparent;padding:7px 9px;font-size:12px}
+nav button.active{color:#ffd700;border-top:2px solid #ffd700}
+h1{font-size:27px;margin:10px 0}
+h2{font-size:20px}
+.notice{font-size:12px;color:#ffd979;line-height:1.6}
+.item{padding:12px 0;border-bottom:1px solid #333;overflow-wrap:anywhere}
+</style>
+</head>
+<body>
+<main>
+<header>
+<strong><span class="gold">● N</span> NEXUS CAPITAL</strong>
+<small>DEMO MODE</small>
+</header>
+
+<div class="card notice">
+  IYI NI DEMO YO KWIGA. Nta mafaranga nyayo,
+  ubwishyu bwa MoMo cyangwa inyungu nyazo bikorwa.
+</div>
+
+<section id="home" class="page active">
+<div class="card">
+<p class="muted">Amafaranga yo muri demo</p>
+<h1 id="balance">0 RWF</h1>
+<div class="grid">
+<button class="primary" onclick="showPage('invest')">Shora muri demo</button>
+<button onclick="showPage('wallet')">Wallet</button>
+</div>
+</div>
+<div class="card">
+<h3>Bara inyungu z'igerageza gusa</h3>
+<label for="calc">Amafaranga (RWF)</label>
+<input id="calc" type="number" min="0" placeholder="100000">
+<p>Ku munsi: <b id="daily" class="gold">0 RWF</b></p>
+<p>Ku minsi 7: <b id="weekly">0 RWF</b></p>
+<p>Ku minsi 30: <b id="monthly">0 RWF</b></p>
+<small>Ibarura rya 1.5% rishingiye ku mibare gusa,
+ntirisobanura inyungu zizewe cyangwa zabonetse.</small>
+</div>
+</section>
+
+<section id="invest" class="page">
+<div class="card">
+<h2>Invest — Demo</h2>
+<p class="muted">Hitamo amafaranga yo kugerageza.</p>
+<label for="amount">Amafaranga (RWF)</label>
+<input id="amount" type="number" min="1" step="1" placeholder="50000">
+<div class="grid">
+<button onclick="setAmount(50000)">50,000 RWF</button>
+<button onclick="setAmount(130000)">130,000 RWF</button>
+<button onclick="setAmount(300000)">300,000 RWF</button>
+<button onclick="setAmount(1000000)">1,000,000 RWF</button>
+</div>
+<button class="primary full" onclick="invest()">Gerageza gushora</button>
+<p id="investMessage" class="notice" role="status"></p>
+</div>
+<div class="card">
+<h3>Amateka ya Invest</h3>
+<div id="investHistory" class="muted">Nta gikorwa kirakorwa.</div>
+</div>
+</section>
+
+<section id="wallet" class="page">
+<div class="card">
+<h2>Wallet — Demo</h2>
+<p class="muted">Amafaranga ari muri demo</p>
+<h1 id="walletBalance">0 RWF</h1>
+<p class="notice">Iyi buto yongeraho amafaranga y'igerageza gusa.
+Ntabwo ari uburyo bwo kwishyura.</p>
+<button class="primary full" onclick="demoDeposit()">Ongeraho 100,000 RWF (Demo)</button>
+<button class="full" onclick="resetDemo()">Subizaho demo kuri zeru</button>
+</div>
+<div class="card">
+<h3>Amateka ya Wallet</h3>
+<div id="walletHistory" class="muted">Nta gikorwa kirakorwa.</div>
+</div>
+</section>
+
+<section id="referral" class="page">
+<div class="card">
+<h2>Referral</h2>
+<p class="muted">Sangiza abandi link y'urubuga.</p>
+<input id="refLink" readonly>
+<button class="primary full" onclick="copyReferral()">Koporora link</button>
+<button class="full" onclick="shareReferral()">Sangiza kuri WhatsApp</button>
+<p id="refMessage" class="notice" role="status"></p>
+</div>
+</section>
+
+<section id="profile" class="page">
+<div class="card">
+<h2>Profile</h2>
+<p>NEXUS CAPITAL — Demo account</p>
+<p class="notice">Nta konti yemejwe cyangwa umwirondoro
+w'umukoresha ugenzurwa n'iyi demo.</p>
+</div>
+</section>
+
+<nav>
+<button class="active" data-page="home" onclick="showPage('home')">⌂<br>Home</button>
+<button data-page="invest" onclick="showPage('invest')">↗<br>Invest</button>
+<button data-page="wallet" onclick="showPage('wallet')">▣<br>Wallet</button>
+<button data-page="referral" onclick="showPage('referral')">♧<br>Referral</button>
+<button data-page="profile" onclick="showPage('profile')">♙<br>Profile</button>
+</nav>
+</main>
+
+<script>
+const KEY = "nexusCapitalDemoV1";
+const money = n => Math.round(n).toLocaleString("en-US") + " RWF";
+
+function freshState(){
+  return {balance:0, wallet:[], investments:[]};
+}
+function loadState(){
+  try {
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if(s && Number.isFinite(s.balance) &&
+       Array.isArray(s.wallet) && Array.isArray(s.investments)){
+      return s;
+    }
+  } catch(e) {}
+  return freshState();
+}
+let state = loadState();
+
+function save(){
+  localStorage.setItem(KEY, JSON.stringify(state));
+  render();
+}
+function showPage(id){
+  document.querySelectorAll(".page").forEach(p =>
+    p.classList.toggle("active", p.id === id));
+  document.querySelectorAll("nav button").forEach(b =>
+    b.classList.toggle("active", b.dataset.page === id));
+}
+function render(){
+  document.getElementById("balance").textContent = money(state.balance);
+  document.getElementById("walletBalance").textContent = money(state.balance);
+  document.getElementById("walletHistory").innerHTML =
+    state.wallet.length ? state.wallet.slice().reverse().map(x =>
+      `<div class="item">${escapeText(x.label)} — ${money(x.amount)}</div>`
+    ).join("") : "Nta gikorwa kirakorwa.";
+  document.getElementById("investHistory").innerHTML =
+    state.investments.length ? state.investments.slice().reverse().map(x =>
+      `<div class="item">${escapeText(x.label)} — ${money(x.amount)}</div>`
+    ).join("") : "Nta gikorwa kirakorwa.";
+}
+function escapeText(s){
+  const d = document.createElement("div");
+  d.textContent = String(s);
+  return d.innerHTML;
+}
+function setAmount(n){
+  document.getElementById("amount").value = n;
+}
+function invest(){
   const field = document.getElementById("amount");
   const msg = document.getElementById("investMessage");
-  const amount = Number(field.value);
-
-  if (!Number.isSafeInteger(amount) || amount <= 0) {
-    msg.textContent = "Andika amafaranga arenga zeru.";
+  const n = Number(field.value);
+  if(!Number.isSafeInteger(n) || n <= 0){
+    msg.textContent = "Andika amafaranga yuzuye kandi aruta zeru.";
     return;
   }
-
-  if (amount > state.balance) {
-    msg.textContent =
-      "Amafaranga ari muri Wallet yawe ntahagije.";
+  if(n > state.balance){
+    msg.textContent = "Amafaranga ya demo ntahagije. Koresha Wallet ya demo.";
     return;
   }
-
-  state.balance -= amount;
-  state.investments.push({
-    label: "Invest ya demo",
-    amount: amount
-  });
-  state.wallet.push({
-    label: "Amafaranga ajyanywe muri Invest",
-    amount: -amount
-  });
-
+  state.balance -= n;
+  state.investments.push({label:"Invest ya demo", amount:n});
+  state.wallet.push({label:"Yoherejwe muri Invest (demo)",amount:-n});
   save();
-
-  msg.textContent =
-    "Byakunze! Amafaranga wanditse yakuwe muri Wallet ya demo.";
+  msg.textContent = "Igikorwa cya demo cyanditswe. Nta mafaranga nyayo yashowe.";
 }
+function demoDeposit(){
+  state.balance += 100000;
+  state.wallet.push({label:"Kongeraho (demo gusa)",amount:100000});
+  save();
+}
+function resetDemo(){
+  if(!confirm("Urashaka gusiba amateka yose ya demo kuri iki gikoresho?")) return;
+  state = freshState();
+  save();
+}
+document.getElementById("calc").addEventListener("input", e => {
+  const n = Math.max(0, Number(e.target.value) || 0);
+  document.getElementById("daily").textContent = money(n * .015);
+  document.getElementById("weekly").textContent = money(n * .015 * 7);
+  document.getElementById("monthly").textContent = money(n * .015 * 30);
+});
+const referralURL = new URL(window.location.href);
+referralURL.searchParams.set("ref","DEMO");
+document.getElementById("refLink").value = referralURL.href;
+async function copyReferral(){
+  const msg = document.getElementById("refMessage");
+  try {
+    await navigator.clipboard.writeText(document.getElementById("refLink").value);
+    msg.textContent = "Link yakopowe.";
+  } catch(e) {
+    msg.textContent = "Hitamo link iri mu gasanduku uyikopore.";
+    document.getElementById("refLink").select();
+  }
+}
+function shareReferral(){
+  const link = document.getElementById("refLink").value;
+  window.open("https://wa.me/?text=" +
+    encodeURIComponent("Reba iyi demo ya NEXUS CAPITAL: " + link), "_blank");
+}
+render();
+</script>
+</body>
+</html>
